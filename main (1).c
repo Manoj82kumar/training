@@ -1,52 +1,88 @@
-
 #include <stdio.h>
-#include <stdlib.h>
-
-
-struct node {
-	int data;
-	struct node* left;
-	struct node* right;
-};
-
-
-struct node* newNode(int data)
+int size = 0;
+void swap(int *p, int *q)
 {
-	struct node* node
-		= (struct node*)malloc(sizeof(struct node));
-	node->data = data;
-	node->left = NULL;
-	node->right = NULL;
-
-	return (node);
+  int temp = *q;
+  *q = *p;
+  *p = temp;
 }
-
-
-void printInorder(struct node* node)
+void heapify(int array[], int size, int i)
 {
-	if (node == NULL)
-		return;
-
-	printInorder(node->left);
-
-	
-	printf("%d ", node->data);
-
-	
-	printInorder(node->right);
+  if (size == 1)
+  {
+    printf("Single element in the heap");
+  }
+  else
+  {
+    int largest = i;
+    int l = 2 * i + 1;
+    int r = 2 * i + 2;
+    if (l < size && array[l] > array[largest])
+      largest = l;
+    if (r < size && array[r] > array[largest])
+      largest = r;
+    if (largest != i)
+    {
+      swap(&array[i], &array[largest]);
+      heapify(array, size, largest);
+    }
+  }
 }
+void insert(int array[], int newNumber)
+{
+  if (size == 0)
+  {
+    array[0] = newNumber;
+    size += 1;
+  }
+  else
+  {
+    array[size] = newNumber;
+    size += 1;
+    for (int i = size / 2 - 1; i >= 0; i--)
+    {
+      heapify(array, size, i);
+    }
+  }
+}
+void deleteRoot(int array[], int num)
+{
+  int i;
+  for (i = 0; i < size; i++)
+  {
+    if (num == array[i])
+      break;
+  }
 
+  swap(&array[i], &array[size - 1]);
+  size -= 1;
+  for (int i = size / 2 - 1; i >= 0; i--)
+  {
+    heapify(array, size, i);
+  }
+}
+void printArray(int array[], int size)
+{
+  for (int i = 0; i < size; ++i)
+    printf("%d ", array[i]);
+  printf("\n");
+}
 int main()
 {
-	struct node* root = newNode(1);
-	root->left = newNode(2);
-	root->right = newNode(3);
-	root->left->left = newNode(4);
-	root->left->right = newNode(5);
+  int array[10];
 
-	printf("Inorder traversal of binary tree is \n");
-	printInorder(root);
+  insert(array, 4);
+  insert(array, 2);
+  insert(array, 8);
+  insert(array, 1);
+  insert(array, 3);
+  insert(array, 6);
+  printf("Max Heap array: ");
+  printArray(array, size);
 
-	getchar();
-	return 0;
+  deleteRoot(array, 4);
+
+  printf("After deleting an element: ");
+
+  printArray(array, size);
 }
